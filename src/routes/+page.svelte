@@ -2,7 +2,9 @@
 	import { onMount } from "svelte";
   import { schnorr } from '@noble/curves/secp256k1'
   import { bech32 } from '@scure/base'
-	import { bytesToHex } from "@noble/curves/abstract/utils";
+	import { bytesToHex, hexToBytes } from "@noble/curves/abstract/utils";
+
+  const Bech32MaxSize = 5000
 
   let npub = ""
   let prevNpub = ""
@@ -16,12 +18,13 @@
 
   onMount(async() => {
     console.log(window.nostr)
-    npub = await window.nostr.getPublicKey()
+    const pubkey = await window.nostr.getPublicKey()
+    npub = encodeNpub(pubkey)
 
     window.addEventListener("nostr:accountchanged", (e) => {
       console.log(e)
       prevNpub = npub
-      npub = e.detail
+      npub = encodeNpub(e.detail)
       npubChanged = true
     })
   })
@@ -43,10 +46,18 @@
   }) => {
     const event = JSON.parse(eventData)
 
-    const {prefix, words} = bech32.decode(event.pubkey, 5000)
-    const pubkey = new Uint8Array(bech32.fromWords(words))
-    const result = schnorr.verify(event.sig, event.id, bytesToHex(pubkey))
+    let pubkey = event.pubkey
+    if (event.pubkey.startsWith("npub")) {
+      const {prefix, words} = bech32.decode(pubkey, Bech32MaxSize)
+      pubkey = bytesToHex(new Uint8Array(bech32.fromWords(words)))
+    }
+    const result = schnorr.verify(event.sig, event.id, pubkey)
     alert(`They are ${result}`)
+  }
+
+  function encodeNpub(pubkey) {
+    const words = bech32.toWords(hexToBytes(pubkey))
+    return bech32.encode('npub', words, Bech32MaxSize)
   }
 </script>
 
@@ -76,7 +87,10 @@
 
   <h2>debug</h2>
   <div class="kind1-input">
-    <textarea bind:value={eventData} placeholder="event data" />
+    <textarea
+      style="min-width: 300px; min-height: 200px; field-sizing: content;"
+      placeholder="event data"
+      bind:value={eventData} />
     <button on:click={onClickVerify}>Verify</button>
   </div>
 </section>
