@@ -10,12 +10,16 @@
   let prevNpub = ""
   let npubChanged = false
 
+  // Kind1 Issue
   let kind1Text = ""
   let kind1CreatedAt = 0
   let issuedEvent = {}
 
-  let eventData = ""
-
+  // Debug
+  let eventDataForVerify = ""
+  let signatureForVerify = ""
+  let messageForVerify = ""
+  let hexPubkeyForVerify = ""
   let convertedKey = ""
 
   onMount(async() => {
@@ -62,16 +66,24 @@
     }
   }
 
-  const onClickVerify = (e: MouseEvent & {
+  const onClickVerifyEvent = (e: MouseEvent & {
     currentTarget: EventTarget & HTMLButtonElement;
   }) => {
-    const event = JSON.parse(eventData)
+    const event = JSON.parse(eventDataForVerify)
 
     let pubkey = event.pubkey
     if (event.pubkey.startsWith("npub")) {
       pubkey = decodeNpub(pubkey)
     }
     const result = schnorr.verify(event.sig, event.id, pubkey)
+    alert(`They are ${result}`)
+  }
+
+  const onClickVerify = (e: MouseEvent & {
+    currentTarget: EventTarget & HTMLButtonElement;
+  }) => {
+    let pubkey = hexPubkeyForVerify || decodeNpub(npub)
+    const result = schnorr.verify(signatureForVerify, messageForVerify, pubkey)
     alert(`They are ${result}`)
   }
 
@@ -92,6 +104,10 @@
   }
 </script>
 
+<svelte:head>
+	<title>Nostr Demo</title>
+</svelte:head>
+
 <section class="container">
   <h1>Nostr Demo</h1>
 
@@ -103,28 +119,41 @@
   <p>PREVIOUS: {prevNpub}</p>
   {/if}
 
-  <h2>kind1</h2>
+  <h2>Kind1 Issue</h2>
   <div class="flex-row">
     <input type="text" bind:value={kind1Text} placeholder="text" />
     <button on:click={onClickIssueEvent}>Issue</button>
   </div>
   <div class="flex-row">
-    <label>debug</label>
+    <label>manually created_at</label>
     <input type="number" bind:value={kind1CreatedAt} placeholder="created_at" />
   </div>
   {#if issuedEvent.sig }
   <p class="kind1-event">{JSON.stringify(issuedEvent)}</p>
   {/if}
 
-  <h2>debug</h2>
-  <div class="flex-row">
-    <textarea
-      style="min-width: 300px; min-height: 200px; field-sizing: content;"
-      placeholder="event data"
-      bind:value={eventData} />
-    <button on:click={onClickVerify}>Verify</button>
+  <h2>Debug</h2>
+  <div class="flex-col">
+    <h3>Nostr Event Verification</h3>
+    <div class="flex-row">
+      <textarea
+        style="min-width: 300px; min-height: 200px; field-sizing: content;"
+        placeholder="event data"
+        bind:value={eventDataForVerify} />
+      <button on:click={onClickVerifyEvent}>Verify</button>
+    </div>
   </div>
   <div class="flex-col">
+    <h3>Message Verification</h3>
+    <div class="flex-row">
+      <input placeholder="message" bind:value={messageForVerify} />
+      <input placeholder="signature" bind:value={signatureForVerify} />
+      <input placeholder="public key(hex)" bind:value={hexPubkeyForVerify} />
+      <button on:click={onClickVerify}>Verify</button>
+    </div>
+  </div>
+  <div class="flex-col">
+    <h3>nostr pubkey ↔︎ raw pubkey</h3>
     <input type="text" placeholder="npub or pub" on:change={onChangePubConvert} />
     {#if convertedKey }
     <p class="kind1-event">{convertedKey}</p>
