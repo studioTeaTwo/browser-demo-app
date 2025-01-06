@@ -23,8 +23,12 @@
   let convertedKey = ""
 
   onMount(async() => {
+    console.log(window.ssi)
     console.log(window.nostr)
 
+    /**
+     * window.nostr
+    */
     try {
       const pubkey = await window.nostr.getPublicKey()
       npub = encodeToNpub(pubkey)
@@ -46,6 +50,25 @@
       // If you enables the prefs, i.e. Enable, Use built-in NIP07, then come here.
       console.log(e)
       alert(`Provider Changed! detail:${e}`)
+    })
+
+    /**
+     * window.ssi
+    */
+    console.log("window.ssi.nostr: getPublicKey", await window.ssi.nostr.getPublicKey())
+    window.ssi.nostr.addEventListener("accountChanged", (e) => {
+      // If you trun on the "Notify Account Changed", then come here.
+
+      console.log(e)
+      prevNpub = npub
+      npub = encodeToNpub(e.detail)
+      npubChanged = true
+      console.log(`window.ssi.nostr: Account Changed! detail:${e}`)
+    })
+    window.ssi.nostr.addEventListener("providerChanged", (e) => {
+      // If you enables the prefs, i.e. Enable, Use built-in NIP07, then come here.
+      console.log(e)
+      console.log(`window.ssi.nostr: Provider Changed! detail:${e}`)
     })
   })
 
