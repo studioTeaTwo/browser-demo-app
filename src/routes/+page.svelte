@@ -63,12 +63,12 @@
       prevNpub = npub
       npub = encodeToNpub(e.detail)
       npubChanged = true
-      console.log(`window.ssi.nostr: Account Changed! detail:${e}`)
+      console.log(`window.ssi.nostr: Account Changed! detail:${e.detail}`)
     })
     window.ssi.nostr.addEventListener("providerChanged", (e) => {
       // If you enables the prefs, i.e. Enable, Use built-in NIP07, then come here.
       console.log(e)
-      console.log(`window.ssi.nostr: Provider Changed! detail:${e}`)
+      console.log(`window.ssi.nostr: Provider Changed! detail:${e.detail}`)
     })
   })
 
