@@ -44,7 +44,7 @@
       prevNpub = npub
       npub = encodeToNpub(e.detail)
       npubChanged = true
-      alert(`Account Changed! detail:${e}`)
+      alert(`Account Changed! detail:${e.detail}`)
     })
     window.addEventListener("providerChanged", (e) => {
       // If you enables the prefs, i.e. Enable, Use built-in NIP07, then come here.
