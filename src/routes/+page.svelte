@@ -67,6 +67,12 @@
 		window.ssi.nostr.removeEventListener('providerChanged', providerChangedListenerForSsi);
 	};
 
+	const onClickGetPubkey = async () => {
+		const pubkey = await window.nostr.getPublicKey()
+		npub = encodeToNpub(pubkey);
+		console.log('window.nostr: re-getPublicKey', pubkey);
+	}
+
 	const onClickIssueEvent = async (
 		e: MouseEvent & {
 			currentTarget: EventTarget & HTMLButtonElement;
@@ -183,6 +189,9 @@
 	{#if prevNpub}
 		<p>PREVIOUS: {prevNpub}</p>
 	{/if}
+	<div class="flex-row">
+		<button on:click={onClickGetPubkey}>Re-get public key</button>
+	</div>
 
 	<h2>Kind1 Issue</h2>
 	<div class="flex-row">
