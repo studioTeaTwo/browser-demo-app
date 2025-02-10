@@ -3,6 +3,7 @@
 	import { schnorr } from '@noble/curves/secp256k1';
 	import { bech32 } from '@scure/base';
 	import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
+	import { waitNostr } from "nip07-awaiter";
 
 	const Bech32MaxSize = 5000;
 
@@ -26,6 +27,10 @@
 		console.log(window.ssi);
 		console.log(window.nostr);
 
+		const nostrOrUndefined = await waitNostr(1000);
+		if (!nostrOrUndefined) {
+			console.error("couldn't get window.nostr in 1 second")
+		}
 		await inject();
 
 		window.addEventListener('providerChanged', providerChangedListenerForWindow);
