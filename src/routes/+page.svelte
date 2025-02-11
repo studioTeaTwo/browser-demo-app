@@ -21,6 +21,11 @@
 	let cipherTextNip04 = '';
 	let pubkeyNip04 = '';
 
+	// NIP-44
+	let textNip44 = '';
+	let cipherTextNip44 = '';
+	let pubkeyNip44 = '';
+
 	// Debug
 	let eventDataForVerify = '';
 	let signatureForVerify = '';
@@ -104,20 +109,37 @@
 
 	const onClickEncrypt = async(type: 'nip04'| 'nip44') => {
 		console.log(`${type} encrypt`);
-		if (!pubkeyNip04) {
-			alert(`Input pubkey`);
-			return;
+		if (type === 'nip04') {
+			if (!pubkeyNip04) {
+				alert(`Input pubkey`);
+				return;
+			}
+			cipherTextNip04 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip04), textNip04)
+		} else {
+			if (!pubkeyNip44) {
+				alert(`Input pubkey`);
+				return;
+			}
+			cipherTextNip44 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip44), textNip44)
 		}
-		cipherTextNip04 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip04), textNip04)
 	}
 
 	const onClickDecrypt = async(type: 'nip04'| 'nip44') => {
 		console.log(`${type} decrypt`);
-		if (!pubkeyNip04) {
-			alert(`Input pubkey`);
-			return;
+		if (type === 'nip04') {
+			if (!pubkeyNip04) {
+				alert(`Input pubkey`);
+				return;
+			}
+			textNip04 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip04), cipherTextNip04)
+		} else {
+			if (!pubkeyNip44) {
+				alert(`Input pubkey`);
+				return;
+			}
+			textNip44 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip44), cipherTextNip44)
 		}
-		textNip04 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip04), cipherTextNip04)
+
 	}
 
 	const onClickVerifyEvent = (
@@ -255,6 +277,30 @@
 				bind:value={cipherTextNip04}
 			/>
 			<button on:click={() => onClickDecrypt('nip04')}>Decrypt</button>
+		</div>
+	</div>
+
+	<h2>NIP-44</h2>
+	<div class="flex-col">
+		<div class="flex-row">
+			<label>Conversation partner's pubkey</label>
+			<input type="string" bind:value={pubkeyNip44} placeholder="npub1..." />
+		</div>
+		<div class="flex-row">
+			<textarea
+				style="min-width: 300px; min-height: 50px; field-sizing: content;"
+				placeholder="message to encrypt"
+				bind:value={textNip44}
+			/>
+			<button on:click={() => onClickEncrypt('nip44')}>Encrypt</button>
+		</div>
+		<div class="flex-row">
+			<textarea
+				style="min-width: 300px; min-height: 50px; field-sizing: content;"
+				placeholder="message to decrypt"
+				bind:value={cipherTextNip44}
+			/>
+			<button on:click={() => onClickDecrypt('nip44')}>Decrypt</button>
 		</div>
 	</div>
 
