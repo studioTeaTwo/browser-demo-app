@@ -16,6 +16,11 @@
 	let kind1CreatedAt = 0;
 	let issuedEvent = {};
 
+	// NIP-04
+	let textNip04 = '';
+	let cipherTextNip04 = '';
+	let pubkeyNip04 = '';
+
 	// Debug
 	let eventDataForVerify = '';
 	let signatureForVerify = '';
@@ -96,6 +101,24 @@
 			alert(`You can't! detail:${e}`);
 		}
 	};
+
+	const onClickEncrypt = async(type: 'nip04'| 'nip44') => {
+		console.log(`${type} encrypt`);
+		if (!pubkeyNip04) {
+			alert(`Input pubkey`);
+			return;
+		}
+		cipherTextNip04 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip04), textNip04)
+	}
+
+	const onClickDecrypt = async(type: 'nip04'| 'nip44') => {
+		console.log(`${type} decrypt`);
+		if (!pubkeyNip04) {
+			alert(`Input pubkey`);
+			return;
+		}
+		textNip04 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip04), cipherTextNip04)
+	}
 
 	const onClickVerifyEvent = (
 		e: MouseEvent & {
@@ -210,6 +233,30 @@
 	{#if issuedEvent.sig}
 		<p class="kind1-event">{JSON.stringify(issuedEvent)}</p>
 	{/if}
+
+	<h2>NIP-04</h2>
+	<div class="flex-col">
+		<div class="flex-row">
+			<label>Conversation partner's pubkey</label>
+			<input type="string" bind:value={pubkeyNip04} placeholder="npub1..." />
+		</div>
+		<div class="flex-row">
+			<textarea
+				style="min-width: 300px; min-height: 50px; field-sizing: content;"
+				placeholder="message to encrypt"
+				bind:value={textNip04}
+			/>
+			<button on:click={() => onClickEncrypt('nip04')}>Encrypt</button>
+		</div>
+		<div class="flex-row">
+			<textarea
+				style="min-width: 300px; min-height: 50px; field-sizing: content;"
+				placeholder="message to decrypt"
+				bind:value={cipherTextNip04}
+			/>
+			<button on:click={() => onClickDecrypt('nip04')}>Decrypt</button>
+		</div>
+	</div>
 
 	<h2>Debug</h2>
 	<div class="flex-col">
