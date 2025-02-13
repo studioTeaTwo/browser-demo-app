@@ -4,6 +4,7 @@
 	import { bech32 } from '@scure/base';
 	import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
 	import { waitNostr } from "nip07-awaiter";
+	import { type Event } from "nostr-typedef";
 
 	const Bech32MaxSize = 5000;
 
@@ -14,7 +15,7 @@
 	// Kind1 Issue
 	let kind1Text = '';
 	let kind1CreatedAt = 0;
-	let issuedEvent = {};
+	let issuedEvent = {} as Event;
 
 	// NIP-04
 	let textNip04 = '';
@@ -47,6 +48,10 @@
 	});
 
 	const inject = async () => {
+		if (!window.nostr) {
+			return;
+		}
+
 		/**
 		 * window.nostr
 		 */
@@ -58,7 +63,6 @@
 			// If you disables the prefs, i.e. Enable, Use built-in NIP07 or Use TrustedSites, then come here.
 			alert(`NIP-07 is disabled! detail:${e}`);
 		}
-
 		window.nostr.addEventListener('accountChanged', accountChangedListener);
 		window.nostr.addEventListener('providerChanged', providerChangedListener);
 
@@ -71,6 +75,13 @@
 	};
 
 	const dispose = async () => {
+		if (!window.nostr) {
+			return;
+		}
+
+		/**
+		 * window.nostr
+		 */
 		window.nostr.removeEventListener('accountChanged', accountChangedListener);
 		window.nostr.removeEventListener('providerChanged', providerChangedListener);
 
