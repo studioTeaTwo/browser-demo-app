@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"predev": "cp ../../browser/gecko-dev-for-ssi/browser/extensions/ssi/src/custom.type.ts src/ssi.type.ts",
+		"predev": "cp ../../browser/gecko-dev-for-ssi/browser/extensions/ssi/src/*.type.ts src/",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
