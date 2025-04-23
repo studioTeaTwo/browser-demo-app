@@ -7,13 +7,21 @@ export type ProtocolName =
   | "ecash"
   | "nostr"
   | "did:dht";
-export const availableCalls = [
+export const availableCallsBitcoin = [
+  "bitcoin/generate",
+  "bitcoin/shareWith",
+] as const;
+export const availableCallsNostr = [
   "nostr/getPublicKey",
   "nostr/signEvent",
   "nostr/nip04/encrypt",
   "nostr/nip04/decrypt",
   "nostr/nip44/encrypt",
   "nostr/nip44/decrypt",
+] as const;
+export const availableCalls = [
+  ...availableCallsBitcoin,
+  ...availableCallsNostr,
 ] as const;
 export type AvailableCalls = (typeof availableCalls)[number];
 
@@ -78,5 +86,6 @@ export type NostrEvent = {
  * Nostr
  */
 export interface SelfSovereignIndividualPrefs {
+  bitcoin: SelfSovereignIndividualDefaultPrefs;
   nostr: SelfSovereignIndividualDefaultPrefs;
 }
