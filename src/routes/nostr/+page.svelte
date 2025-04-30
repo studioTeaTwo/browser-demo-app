@@ -122,13 +122,13 @@
 		console.log(`${type} encrypt`);
 		if (type === 'nip04') {
 			if (!pubkeyNip04) {
-				alert(`Input pubkey`);
+				alert(`Input partner's pubkey`);
 				return;
 			}
 			cipherTextNip04 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip04), textNip04)
 		} else {
 			if (!pubkeyNip44) {
-				alert(`Input pubkey`);
+				alert(`Input partner's pubkey`);
 				return;
 			}
 			cipherTextNip44 = await window.nostr[type].encrypt(decodeNpub(pubkeyNip44), textNip44)
@@ -139,13 +139,13 @@
 		console.log(`${type} decrypt`);
 		if (type === 'nip04') {
 			if (!pubkeyNip04) {
-				alert(`Input pubkey`);
+				alert(`Input partner's pubkey`);
 				return;
 			}
 			textNip04 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip04), cipherTextNip04)
 		} else {
 			if (!pubkeyNip44) {
-				alert(`Input pubkey`);
+				alert(`Input partner's pubkey`);
 				return;
 			}
 			textNip44 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip44), cipherTextNip44)

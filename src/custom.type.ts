@@ -1,12 +1,7 @@
 import { WindowSSI } from "./window.ssi.type";
 
 type ApplicationName = "ssb";
-export type ProtocolName =
-  | "bitcoin"
-  | "lightning"
-  | "ecash"
-  | "nostr"
-  | "did:dht";
+export type ProtocolName = "bitcoin" | "nostr";
 export const availableCallsBitcoin = [
   "bitcoin/generate",
   "bitcoin/shareWith",
@@ -39,19 +34,17 @@ declare global {
   /**
    * FireFox only methods
    */
-  function cloneInto(
+  function cloneInto<T>(
     obj: object,
     scope: Window,
-    option?: { cloneFunctions?: boolean; wrapReflectors?: boolean }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): any;
+    options?: { cloneFunctions?: boolean; wrapReflectors?: boolean }
+  ): T;
   function exportFunction(
     // eslint-disable-next-line @typescript-eslint/ban-types
     func: Function,
     scope: Window,
-    option?: { defineAs?: string; allowCrossOriginArguments?: boolean }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): (...args) => any;
+    options?: { defineAs?: string; allowCrossOriginArguments?: boolean }
+  ): (...args) => FixMe;
   function XPCNativeWrapper(obj: object): void;
   interface WrappedJSObject {
     ssi: WindowSSI;
