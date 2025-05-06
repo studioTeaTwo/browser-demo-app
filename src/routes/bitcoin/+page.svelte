@@ -3,10 +3,12 @@
 	import { schnorr } from '@noble/curves/secp256k1';
 	import { bech32 } from '@scure/base';
 	import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
+	import type { BitcoinGenerateType, BitcoinShareType } from '../../window.ssi.type';
 
 	const Bech32MaxSize = 5000;
 
-	let type = "mnemonic";
+	let generateType: BitcoinGenerateType = "mnemonic";
+	let shareType: BitcoinShareType = "mnemonic";
 	let strength = 128;
 	let passphrase = "";
 	let pubkey = "";
@@ -43,12 +45,20 @@
 	};
 
 	const onClickGenerate = async(e) => {
-		const res = await window.ssi.bitcoin.generate({type, strength, passphrase})
+		const res = await window.ssi.bitcoin.generate({type: generateType, strength, passphrase})
 		console.log("generate", res);
 	}
 
 	const onClickShare = async(e) => {
-		const res = await window.ssi.bitcoin.shareWith(pubkey, {type})
+		const options = { type: shareType };
+		if (shareType === "xprv") {
+			if (!xpub) {
+				alert("xpub required!")
+				return;
+			}
+			options.xpub = xpub;
+		}
+		const res = await window.ssi.bitcoin.shareWith(pubkey, options)
 		console.log("shareWith", res);
 	}
 
@@ -73,7 +83,7 @@
 
 	<h2>Generate</h2>
 	<div class="flex-row">
-		<select name="BitcoinGenerateType" id="BitcoinGenerateType" bind:value={type}>
+		<select name="BitcoinGenerateType" id="BitcoinGenerateType" bind:value={generateType}>
 			<option value="mnemonic">mnemonic</option>
 			<option value="derivation">derivation</option>
 		</select>
@@ -84,10 +94,10 @@
 
 	<h2>Share</h2>
 	<div class="flex-row">
-		<select name="BitcoinShareType" id="BitcoinShareType" bind:value={type}>
+		<select name="BitcoinShareType" id="BitcoinShareType" bind:value={shareType}>
 			<option value="mnemonic">mnemonic</option>
 			<option value="derivation">derivation</option>
-			<option value="xpriv">xpriv</option>
+			<option value="xprv">xprv</option>
 		</select>
 		<input type="text" bind:value={pubkey} placeholder="receiver's npub" />
 		<input type="text" bind:value={xpub} placeholder="xpub" />
