@@ -150,7 +150,16 @@
 			}
 			textNip44 = await window.nostr[type].decrypt(decodeNpub(pubkeyNip44), cipherTextNip44)
 		}
+	}
 
+	const onClickGenerate = async () => {
+		const pubkey = await window.ssi.nostr.generate({type: "single"})
+		if (npub) {
+			npubChanged = true;
+			prevNpub = npub;
+		}
+		npub = encodeToNpub(pubkey);
+		console.log('window.ssi.nostr: generate', pubkey);
 	}
 
 	const onClickVerifyEvent = (
@@ -262,6 +271,14 @@
 	<div class="flex-row">
 		<label>manually created_at</label>
 		<input type="number" bind:value={kind1CreatedAt} placeholder="created_at" />
+	</div>
+	{#if issuedEvent.sig}
+		<p class="kind1-event">{JSON.stringify(issuedEvent)}</p>
+	{/if}
+
+	<h2>Generate</h2>
+	<div class="flex-row">
+		<button on:click={onClickGenerate}>Generate</button>
 	</div>
 	{#if issuedEvent.sig}
 		<p class="kind1-event">{JSON.stringify(issuedEvent)}</p>
