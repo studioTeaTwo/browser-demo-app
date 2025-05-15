@@ -5,12 +5,14 @@
 	import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
 	import { waitNostr } from "nip07-awaiter";
 	import { type Event } from "nostr-typedef";
+	import type { NostrGenerateType } from '../../window.ssi.type';
 
 	const Bech32MaxSize = 5000;
 
 	let npub = '';
 	let prevNpub = '';
 	let npubChanged = false;
+	let generateType: NostrGenerateType = 'single';
 
 	// Kind1 Issue
 	let kind1Text = '';
@@ -153,7 +155,8 @@
 	}
 
 	const onClickGenerate = async () => {
-		const pubkey = await window.ssi.nostr.generate({type: "single"})
+		console.log(generateType);
+		const pubkey = await window.ssi.nostr.generate({type: generateType})
 		if (npub) {
 			npubChanged = true;
 			prevNpub = npub;
@@ -278,11 +281,12 @@
 
 	<h2>Generate</h2>
 	<div class="flex-row">
+		<select name="NostrGenerateType" id="NostrGenerateType" bind:value={generateType}>
+			<option value="single">single</option>
+			<option value="mnemonic">mnemonic</option>
+		</select>
 		<button on:click={onClickGenerate}>Generate</button>
 	</div>
-	{#if issuedEvent.sig}
-		<p class="kind1-event">{JSON.stringify(issuedEvent)}</p>
-	{/if}
 
 	<h2>NIP-04</h2>
 	<div class="flex-col">

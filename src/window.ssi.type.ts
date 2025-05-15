@@ -24,7 +24,7 @@ export interface BitcoinSharedSecret {
   receiver: string; // The Nostr public key of the person with whom the secret is shared. It's in hex format.
 }
 /** Implementation list of Nostr generation spec. */
-export type NostrGenerateType = "single";
+export type NostrGenerateType = "single" | "mnemonic";
 /** Implementation list of Nostr signature spec. */
 export type NostrSignType = "signEvent";
 /** Implementation list of Nostr encyption spec. */
@@ -134,7 +134,7 @@ export interface WindowSSINostr extends Omit<EventTarget, "dispatchEvent"> {
    * Generates Nostr key in the specified order. During the execution process, an internal authorization check is performed similar to `browser.ssi.askConsent`.
    *
    * @param options - Direction about generation detail.
-   * @param options.type - The type that specifies the secret you want the user to generate: e.g. `\"single\"`.
+   * @param options.type - The type that specifies the secret you want the user to generate: e.g. `\"single\"`, `\"mnemonic\"`.
    * @returns A Promise that will be fulfilled with a `string` of hex-format public key.
    * @throws If failed
    */
@@ -143,7 +143,7 @@ export interface WindowSSINostr extends Omit<EventTarget, "dispatchEvent"> {
    * Callback type of `generate`.
    *
    * @param options - Direction about generation detail.
-   * @param options.type - The type that specifies the secret you want the user to generate: e.g. `\"single\"`.
+   * @param options.type - The type that specifies the secret you want the user to generate: e.g. `\"single\"`, `\"mnemonic\"`.
    * @param callback - A reference to a function that should be called in the near future, when the result is returned. The callback function is passed two arguments — 1. Error object if failed otherwise null, 2. The resulting hex-format public key.
    */
   generateSync(
